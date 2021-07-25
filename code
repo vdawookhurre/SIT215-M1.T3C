@@ -1,0 +1,54 @@
+const int Red_led = 13;
+const int Motion_pin = 2;
+const int Buzzer = 11;
+const int Tilt =3;
+
+
+void setup()
+{
+  
+  pinMode(Motion_pin, INPUT); //sets pir as input
+  pinMode(Tilt, INPUT_PULLUP); // Sets the tilt as an Input
+  pinMode(Buzzer, OUTPUT); // Sets the buzzer as an Output
+  pinMode(Red_led, OUTPUT); //sets led as output
+ 
+  
+  Serial.begin(9600);
+  
+  // Attach interrupt for PIR sensor
+  attachInterrupt(digitalPinToInterrupt(Motion_pin), motion, CHANGE);
+  // Attach interrupt for tilt sensor
+  attachInterrupt(digitalPinToInterrupt(Tilt), tilt, CHANGE);
+  // Initialise serial monitor
+  Serial.begin(9600);
+}
+
+// Initialise motion variable as state 0 (LOW)
+volatile int MotionState = 0;
+//Initialize tilt variable to state 0 (LOW)
+volatile int TiltState = 0;
+
+void loop() {
+  
+  
+  // Print state
+  Serial.println("Motion: " + String(MotionState));
+  Serial.println("Tilt: " + String(TiltState));
+  
+}
+
+void motion() {
+  // Flip motion variable
+  MotionState = !MotionState;
+  // Write led pin (if 0, off, if 1, on)
+  digitalWrite(Red_led, MotionState);
+}
+
+void tilt()
+{
+  // Flip tilt variable
+  TiltState = !TiltState;
+  // changing buzzer state (if 0, off, if 1, on)
+  digitalWrite(Buzzer, TiltState);
+  
+}
